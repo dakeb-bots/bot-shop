@@ -3,7 +3,7 @@ from create_bot import bot
 
 def sql_start():
     global base, cur
-    base = sql.connect('shop.db')
+    base = sql.connect('shop.db',)
     cur = base.cursor()
     if base:
         print('Database connected!')
