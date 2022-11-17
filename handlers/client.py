@@ -12,10 +12,6 @@ async def welcome(message: types.Message):
 async def menu(message: types.Message):
     await bot.send_photo(message.chat.id, photo=InputFile('resources/images/menu.png'), reply_markup=markups.main_menu())
 
-
-#async def delete_product(call: types.CallbackQuery):
-#    sqlalchemy_database.delete_by_id(call, call.data.replace('delete_product ', ''))
-#    await bot.send_message(call.from_user.id, 'Удалено!')
 # Меню
 @dp.callback_query_handler(lambda call: call.data)
 async def event_buttons_client(call: types.CallbackQuery):
@@ -38,9 +34,12 @@ async def event_buttons_client(call: types.CallbackQuery):
         await sqlalchemy_database.write_products(call, True)
 
     if call.data and call.data.startswith('delete_product '):
-        print(call.data)
-        print(call.data.replace('delete_product ', ''))
         await sqlalchemy_database.delete_by_id(call, call.data.replace('delete_product ', ''))
+    elif call.data and call.data.startswith('edit_product '):
+        print(call.data)
+        print(call.data.replace('edit_product ', ''))
+        name = sqlalchemy_database.get_name_product(call.data.replace("edit_product ", ""))
+        await bot.send_message(call.from_user.id, f'Товар: [{name}]\nЧто будем редактировать?', reply_markup=markups.edit_question())
 
 def register_handlers_client(dp: Dispatcher):
     dp.register_message_handler(welcome, commands=['help', 'start'])

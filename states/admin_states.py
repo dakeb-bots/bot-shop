@@ -5,3 +5,9 @@ class FSM_Add_Product(StatesGroup):
     name = State()
     description = State()
     price = State()
+
+class FSM_Edit_all(StatesGroup):
+    photo = State()
+    name = State()
+    description = State()
+    price = State()

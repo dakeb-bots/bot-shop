@@ -1,4 +1,3 @@
-from utils import sqlite_database
 from aiogram.types import ReplyKeyboardMarkup, ReplyKeyboardRemove, KeyboardButton, InlineKeyboardButton, InlineKeyboardMarkup
 
 btn_go_to_main_menu = InlineKeyboardButton('Главное меню', callback_data='main_menu')
@@ -19,9 +18,10 @@ def main_menu():
 def admin_menu():
     btn_add_product = InlineKeyboardButton(text='Добавить товар', callback_data='add_product')
     btn_show_product = InlineKeyboardButton(text='Показать товары', callback_data='show_products')
+    upload_in_file = InlineKeyboardButton(text='Загрузить товары из файла', callback_data='upload_in_file')
 
     markup_admin = InlineKeyboardMarkup()
-    markup_admin.row(btn_add_product)
+    markup_admin.row(btn_add_product, upload_in_file)
     markup_admin.add(btn_show_product)
     markup_admin.add(btn_exit)
 
@@ -35,3 +35,15 @@ def edit_menu(text = '', cb_data = ''):
     markup_edit.add(btn_edit, btn_delete)
 
     return markup_edit
+
+def edit_question(text = '', cb_data = ''):
+    btn_edit_photo = InlineKeyboardButton(text=f'Фото', callback_data=f'photo')
+    btn_edit_name = InlineKeyboardButton(text=f'Название', callback_data=f'name')
+    btn_edit_description = InlineKeyboardButton(text=f'Описание', callback_data=f'description')
+    btn_edit_price = InlineKeyboardButton(text=f'Цену', callback_data=f'price')
+    btn_edit_all = InlineKeyboardButton(text=f'Всё', callback_data=f'all')
+
+    markup_edit_question = InlineKeyboardMarkup()
+    markup_edit_question.add(btn_edit_photo, btn_edit_name, btn_edit_description, btn_edit_price, btn_edit_all, btn_exit)
+
+    return markup_edit_question

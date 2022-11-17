@@ -7,7 +7,6 @@ from handlers import admin
 import logging
 logging.basicConfig(level=logging.INFO)
 
-from utils import sqlite_database
 from utils import sqlalchemy_database
 
 admin.register_handlers_admin(dp)

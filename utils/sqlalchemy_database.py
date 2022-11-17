@@ -30,6 +30,15 @@ async def write_products(message, id=False):
         for row in result.fetchall():
             await bot.send_photo(message.from_user.id, photo=row['img'], caption=f'*{row["name"]}*\n{row["description"]}\nЦена: {row["price"]} руб.', parse_mode="Markdown")
 
+async def write_by_id(message, id):
+    q = select(products).where(products.c.id == id)
+    result = engine.execute(q)
+    await bot.send_photo(message.from_user.id, photo=result['img'],caption=f'*{result["name"]}*\n{result["description"]}\nЦена: {result["price"]} руб.',parse_mode="Markdown")
+
+def get_name_product(id):
+    q = products.select().where(products.c.id == id)
+    result = engine.execute(q).fetchall()
+    return result[0]['name']
 async def delete_by_id(message, id):
     q = products.delete().where(products.c.id == id)
     engine.execute(q)
