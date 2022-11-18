@@ -1,4 +1,5 @@
-from sqlalchemy import create_engine, MetaData, Table, Integer, String, Column, DateTime, ForeignKey, Numeric, CheckConstraint, select
+from sqlalchemy import create_engine, MetaData, Table, Integer, String, Column, DateTime, ForeignKey, Numeric, CheckConstraint, select, exists
+from sqlalchemy.dialects.postgresql import insert
 from create_bot import bot
 import sqlite3 as sql
 from datetime import datetime
@@ -9,8 +10,9 @@ engine = create_engine('sqlite:///shop.db')
 
 # Connect to table
 products = Table('products', metadata, autoload_with=engine)
+users = Table('users', metadata, autoload_with=engine)
 
-# Create table
+# Create table products
 # products = Table('products', metadata,
 #                 Column('id', Integer, primary_key=True),
 #                 Column('img', String(255), nullable=False),
@@ -19,6 +21,21 @@ products = Table('products', metadata, autoload_with=engine)
 #                 Column('price', String(255), nullable=False),
 # )
 
+# Create table users
+# users = Table('users', metadata,
+#                 Column('id', Integer, primary_key=True),
+#                 Column('user_id', String(255), nullable=False)
+# )
+
+
+def check_user(id):
+    q = select(users).where(users.c.user_id == id)
+    result = engine.execute(q).fetchall()
+    return bool(len(result))
+def write_user(id):
+    q = insert(users).values(user_id=id)
+    engine.execute(q)
+    print(f'user {id} added')
 async def write_products(message, id=False):
     q = select(products)
     if id:

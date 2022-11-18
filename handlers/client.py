@@ -9,10 +9,18 @@ from aiogram.dispatcher import FSMContext
 
 async def welcome(message: types.Message):
     await bot.send_message(message.chat.id, f'Привет, {message.from_user.first_name}! 🤖\nЧтобы открыть меню /menu')
+    if sqlalchemy_database.check_user(message.from_user.id) != True: sqlalchemy_database.write_user(message.from_user.id)
+    print(f'{message.from_user.id} started bot')
 
 async def menu(message: types.Message):
     await bot.send_photo(message.chat.id, photo=InputFile('resources/images/menu.png'), reply_markup=markups.main_menu())
 
+# Выводим сообщение при успешной оплаты
+@dp.message_handler(content_types=types.ContentType.SUCCESSFUL_PAYMENT)
+async def process_successful_payment(message: types.Message):
+    await bot.send_message(message.chat.id, 'Операция прошла успешно, спасибо что выбрали нас!')
+
+# Обрабатываем платеж
 @dp.pre_checkout_query_handler(lambda query: True)
 async def process_pre_checkout_query(pre_check_out_query: types.PreCheckoutQuery):
     await bot.answer_pre_checkout_query(pre_check_out_query.id, ok=True)
@@ -101,8 +109,6 @@ async def event_buttons_client(call: types.CallbackQuery, state: FSMContext):
     if call.data and call.data.startswith('last '):
         await sqlalchemy_database.write_by_id(message=call, id=call.data.replace("last ", ""))
         await bot.answer_callback_query(call.id)
-
-    print(call.data)
 
 
 def register_handlers_client(dp: Dispatcher):
