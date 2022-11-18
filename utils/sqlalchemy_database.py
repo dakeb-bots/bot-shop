@@ -27,7 +27,8 @@ users = Table('users', metadata, autoload_with=engine)
 #                 Column('user_id', String(255), nullable=False)
 # )
 
-
+def all_users():
+    return engine.execute(select(users)).fetchall()
 def check_user(id):
     q = select(users).where(users.c.user_id == id)
     result = engine.execute(q).fetchall()

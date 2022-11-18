@@ -66,6 +66,12 @@ async def event_buttons_client(call: types.CallbackQuery, state: FSMContext):
     elif call.data == 'show_products':
         await sqlalchemy_database.write_products(call, True)
         await bot.answer_callback_query(call.id)
+    elif call.data == 'go_spam':
+        users = sqlalchemy_database.all_users()
+        print(users)
+        for usr in users:
+            await bot.send_message(usr[1], 'рассылка')
+        await bot.answer_callback_query(call.id)
 
     # Удалить / изменить товар
     if call.data and call.data.startswith('delete_product '):

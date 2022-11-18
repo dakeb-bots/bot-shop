@@ -19,10 +19,12 @@ def admin_menu():
     btn_add_product = InlineKeyboardButton(text='Добавить товар', callback_data='add_product')
     btn_show_product = InlineKeyboardButton(text='Показать товары', callback_data='show_products')
     upload_in_file = InlineKeyboardButton(text='Загрузить товары из файла', callback_data='upload_in_file')
+    btn_mailing_list = InlineKeyboardButton(text='Рассылка', callback_data='go_spam')
 
     markup_admin = InlineKeyboardMarkup()
     markup_admin.row(btn_add_product, upload_in_file)
     markup_admin.add(btn_show_product)
+    markup_admin.add(btn_mailing_list)
     markup_admin.add(btn_exit)
 
     return markup_admin
