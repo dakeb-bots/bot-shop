@@ -53,8 +53,8 @@ async def load_new_photo(message: types.Message, state: FSMContext):
         button_id = data['id_button']
     q = sqlalchemy_database.products.update().where(sqlalchemy_database.products.c.id == button_id).values(img=data['new_photo'])
     sqlalchemy_database.engine.execute(q)
+    await bot.send_message(message.chat.id, 'Фото обновлено!', reply_markup=markups.show_last_changes(cb_data=data['id_button']))
     await state.finish()
-    await bot.send_message(message.chat.id, 'Фото обновлено!')
 
 # Изменение названия #
 async def load_new_name(message: types.Message, state: FSMContext):
@@ -63,10 +63,8 @@ async def load_new_name(message: types.Message, state: FSMContext):
         button_id = data['id_button']
     q = sqlalchemy_database.products.update().where(sqlalchemy_database.products.c.id == button_id).values(name=data['new_name'])
     sqlalchemy_database.engine.execute(q)
+    await bot.send_message(message.chat.id, 'Имя обновлено!', reply_markup=markups.show_last_changes(cb_data=data['id_button']))
     await state.finish()
-    await bot.send_message(message.chat.id, 'Имя обновлено!')
-
-    print(f'btn_id: {button_id} | data = {data["new_name"]}')
 
 # Изменение описание #
 async def load_new_description(message: types.Message, state: FSMContext):
@@ -75,10 +73,8 @@ async def load_new_description(message: types.Message, state: FSMContext):
         button_id = data['id_button']
     q = sqlalchemy_database.products.update().where(sqlalchemy_database.products.c.id == button_id).values(description=data['new_description'])
     sqlalchemy_database.engine.execute(q)
+    await bot.send_message(message.chat.id, 'Описание обновлено!', reply_markup=markups.show_last_changes(cb_data=data['id_button']))
     await state.finish()
-    await bot.send_message(message.chat.id, 'Описание обновлено!')
-
-    print(f'btn_id: {button_id} | data = {data["new_description"]}')
 
 # Изменение цены #
 async def load_new_price(message: types.Message, state: FSMContext):
@@ -87,10 +83,8 @@ async def load_new_price(message: types.Message, state: FSMContext):
         button_id = data['id_button']
     q = sqlalchemy_database.products.update().where(sqlalchemy_database.products.c.id == button_id).values(price=data['new_price'])
     sqlalchemy_database.engine.execute(q)
+    await bot.send_message(message.chat.id, 'Цена обновлена!', reply_markup=markups.show_last_changes(cb_data=data['id_button']))
     await state.finish()
-    await bot.send_message(message.chat.id, 'Цена обновлена!')
-
-    print(f'btn_id: {button_id} | data = {data["new_price"]}')
 
 def register_handlers_admin(dp: Dispatcher):
     dp.register_message_handler(admin_menu, commands='admin')

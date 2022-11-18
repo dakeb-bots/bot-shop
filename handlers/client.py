@@ -48,7 +48,6 @@ async def event_buttons_client(call: types.CallbackQuery, state: FSMContext):
     if call.data and call.data.startswith('photo '):
         async with state.proxy() as data:
             data['id_button'] = call.data.replace("photo ", "")
-            print(f'[client.py] data["idbutton"] = {data["id_button"]}')
         await admin_states.FSM_Edit_photo.photo.set()
         await bot.send_message(call.from_user.id, 'Загрузите новое фото')
         await bot.answer_callback_query(call.id)
@@ -56,7 +55,6 @@ async def event_buttons_client(call: types.CallbackQuery, state: FSMContext):
     elif call.data and call.data.startswith('name '):
         async with state.proxy() as data:
             data['id_button'] = call.data.replace("name ", "")
-            print(f'[client.py] data["idbutton"] = {data["id_button"]}')
         await admin_states.FSM_Edit_name.name.set()
         await bot.send_message(call.from_user.id, 'Введите новое название')
         await bot.answer_callback_query(call.id)
@@ -64,7 +62,6 @@ async def event_buttons_client(call: types.CallbackQuery, state: FSMContext):
     elif call.data and call.data.startswith('description '):
         async with state.proxy() as data:
             data['id_button'] = call.data.replace("description ", "")
-            print(f'[client.py] data["idbutton"] = {data["id_button"]}')
         await admin_states.FSM_Edit_description.description.set()
         await bot.send_message(call.from_user.id, 'Введите новое описание')
         await bot.answer_callback_query(call.id)
@@ -72,9 +69,13 @@ async def event_buttons_client(call: types.CallbackQuery, state: FSMContext):
     elif call.data and call.data.startswith('price '):
         async with state.proxy() as data:
             data['id_button'] = call.data.replace("price ", "")
-            print(f'[client.py] data["idbutton"] = {data["id_button"]}')
         await admin_states.FSM_Edit_price.price.set()
         await bot.send_message(call.from_user.id, 'Введите новую цену')
+        await bot.answer_callback_query(call.id)
+
+    # Показать последнее цену
+    if call.data and call.data.startswith('last '):
+        await sqlalchemy_database.write_by_id(message=call, id=call.data.replace("last ", ""))
         await bot.answer_callback_query(call.id)
 
     # Показать нажатую кнопку

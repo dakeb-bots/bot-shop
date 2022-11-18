@@ -32,8 +32,8 @@ async def write_products(message, id=False):
 
 async def write_by_id(message, id):
     q = select(products).where(products.c.id == id)
-    result = engine.execute(q)
-    await bot.send_photo(message.from_user.id, photo=result['img'],caption=f'*{result["name"]}*\n{result["description"]}\nЦена: {result["price"]} руб.',parse_mode="Markdown")
+    result = engine.execute(q).fetchall()
+    await bot.send_photo(message.from_user.id, photo=result[0]['img'],caption=f'*{result[0]["name"]}*\n{result[0]["description"]}\nЦена: {result[0]["price"]} руб.',parse_mode="Markdown")
 
 def get_name_product(id):
     q = products.select().where(products.c.id == id)
