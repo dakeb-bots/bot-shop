@@ -1,3 +1,4 @@
+import config
 from create_bot import bot, dp
 from aiogram import Dispatcher, types
 from keyboards import markups
@@ -6,12 +7,15 @@ from utils import sqlalchemy_database
 from states import admin_states
 from aiogram.dispatcher import FSMContext
 
-CURR_ID = None
 async def welcome(message: types.Message):
     await bot.send_message(message.chat.id, f'Привет, {message.from_user.first_name}! 🤖\nЧтобы открыть меню /menu')
 
 async def menu(message: types.Message):
     await bot.send_photo(message.chat.id, photo=InputFile('resources/images/menu.png'), reply_markup=markups.main_menu())
+
+@dp.pre_checkout_query_handler(lambda query: True)
+async def process_pre_checkout_query(pre_check_out_query: types.PreCheckoutQuery):
+    await bot.answer_pre_checkout_query(pre_check_out_query.id, ok=True)
 
 # Меню
 @dp.callback_query_handler(lambda call: call.data)
@@ -19,14 +23,34 @@ async def event_buttons_client(call: types.CallbackQuery, state: FSMContext):
     # CLIENT MENU
     if call.data == 'products':
         await sqlalchemy_database.write_products(call)
+        await bot.answer_callback_query(call.id)
     elif call.data == 'about':
         await bot.send_message(call.from_user.id, 'Магазин-бот')
         await bot.answer_callback_query(call.id)
     elif call.data == 'exit':
         await call.message.delete()
         await bot.answer_callback_query(call.id)
+    elif call.data and call.data.startswith('buy '):   # Обработка кнопки купить
+        q = sqlalchemy_database.select(sqlalchemy_database.products).where(sqlalchemy_database.products.c.id == call.data.replace('buy ', ''))
+        result = sqlalchemy_database.engine.execute(q).fetchall()
+        PRICES = types.LabeledPrice(label=result[0]['name'], amount=int(result[0]['price'])*100)
+        if config.PAYMENTS_TOKEN.split(':')[1] == 'TEST':
+            await bot.send_message(call.from_user.id, '*Тестовый платеж*')
+            await bot.send_invoice(
+                call.from_user.id,
+                title=result[0]['name'],
+                description='Оплата товара',
+                provider_token=config.PAYMENTS_TOKEN,
+                currency='rub',
+                is_flexible=False,
+                prices=[PRICES],
+                start_parameter='time-machine-example',
+                payload='some-invoice-payload-for-our-internal-use'
+            )
+            # await bot.send_message(call.from_user.id, int(result[0]['price'])*100)
+        await bot.answer_callback_query(call.id)
     # ADMIN MENU
-    elif call.data == 'add_product':
+    elif call.data and call.data == 'add_product':
         await call.message.delete()
         await bot.send_message(call.from_user.id, 'Кинь фото товара, чтобы отменить /cancel')
         await admin_states.FSM_Add_Product.photo.set()
@@ -78,8 +102,8 @@ async def event_buttons_client(call: types.CallbackQuery, state: FSMContext):
         await sqlalchemy_database.write_by_id(message=call, id=call.data.replace("last ", ""))
         await bot.answer_callback_query(call.id)
 
-    # Показать нажатую кнопку
-    # print(call.data)
+    print(call.data)
+
 
 def register_handlers_client(dp: Dispatcher):
     dp.register_message_handler(welcome, commands=['help', 'start'])

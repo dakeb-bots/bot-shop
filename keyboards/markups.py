@@ -54,3 +54,11 @@ def show_last_changes(cb_data = ''):
     markup_last.add(btn_show_last)
 
     return markup_last
+
+# CLIENT LEVEL 1.
+def buy(cb_data = ''):
+    btn_buy = InlineKeyboardButton(text='Купить', callback_data=f'buy {cb_data}')
+    markup_buy = InlineKeyboardMarkup()
+    markup_buy.add(btn_buy)
+
+    return markup_buy

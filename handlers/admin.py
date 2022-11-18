@@ -5,7 +5,7 @@ from aiogram.types.input_file import InputFile
 from aiogram.dispatcher import FSMContext
 from states import admin_states
 from utils import sqlalchemy_database
-from handlers.client import CURR_ID
+
 async def admin_menu(message: types.Message):
     await bot.send_photo(message.chat.id, photo=InputFile('resources/images/admin_menu.png'), reply_markup=markups.admin_menu())
 
@@ -93,8 +93,9 @@ def register_handlers_admin(dp: Dispatcher):
     dp.register_message_handler(load_name, state=admin_states.FSM_Add_Product.name)
     dp.register_message_handler(load_description, state=admin_states.FSM_Add_Product.description)
     dp.register_message_handler(load_price, state=admin_states.FSM_Add_Product.price)
-
+    # Изменение товара
     dp.register_message_handler(load_new_photo, content_types=['photo'], state=admin_states.FSM_Edit_photo.photo)
     dp.register_message_handler(load_new_name, state=admin_states.FSM_Edit_name.name)
     dp.register_message_handler(load_new_description, state=admin_states.FSM_Edit_description.description)
     dp.register_message_handler(load_new_price, state=admin_states.FSM_Edit_price.price)
+    # Изменение товара целиком
