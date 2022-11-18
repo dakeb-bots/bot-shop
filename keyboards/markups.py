@@ -1,7 +1,7 @@
 from aiogram.types import ReplyKeyboardMarkup, ReplyKeyboardRemove, KeyboardButton, InlineKeyboardButton, InlineKeyboardMarkup
 
 btn_go_to_main_menu = InlineKeyboardButton('Главное меню', callback_data='main_menu')
-btn_exit = InlineKeyboardButton(text='Выход ❌', callback_data='exit')
+btn_exit = InlineKeyboardButton(text='Выход', callback_data='exit')
 
 # CLIENT | LEVEL 1
 def main_menu():
@@ -37,13 +37,20 @@ def edit_menu(text = '', cb_data = ''):
     return markup_edit
 
 def edit_question(text = '', cb_data = ''):
-    btn_edit_photo = InlineKeyboardButton(text=f'Фото', callback_data=f'photo')
-    btn_edit_name = InlineKeyboardButton(text=f'Название', callback_data=f'name')
-    btn_edit_description = InlineKeyboardButton(text=f'Описание', callback_data=f'description')
-    btn_edit_price = InlineKeyboardButton(text=f'Цену', callback_data=f'price')
-    btn_edit_all = InlineKeyboardButton(text=f'Всё', callback_data=f'all')
+    btn_edit_photo = InlineKeyboardButton(text=f'Фото', callback_data=f'photo {cb_data}')
+    btn_edit_name = InlineKeyboardButton(text=f'Название', callback_data=f'name {cb_data}')
+    btn_edit_description = InlineKeyboardButton(text=f'Описание', callback_data=f'description {cb_data}')
+    btn_edit_price = InlineKeyboardButton(text=f'Цену', callback_data=f'price {cb_data}')
+    btn_edit_all = InlineKeyboardButton(text=f'Всё', callback_data=f'all {cb_data}')
 
     markup_edit_question = InlineKeyboardMarkup()
     markup_edit_question.add(btn_edit_photo, btn_edit_name, btn_edit_description, btn_edit_price, btn_edit_all, btn_exit)
 
     return markup_edit_question
+
+def show_last_changes(cb_data = ''):
+    btn_show_last = InlineKeyboardButton(text='Посмотреть', callback_data=f'last {cb_data}')
+    markup_last = InlineKeyboardMarkup()
+    markup_last.add(btn_show_last)
+
+    return markup_last
